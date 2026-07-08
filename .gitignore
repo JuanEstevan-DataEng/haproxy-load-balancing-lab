@@ -1,0 +1,15 @@
+# Node
+node_modules/
+**/node_modules/
+
+# Load-test artifacts and logs
+*.log
+*.jtl
+
+# Env / Python
+.env
+__pycache__/
+.venv/
+
+.DS_Store
+Thumbs.db

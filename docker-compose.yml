@@ -1,0 +1,46 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-net
+    depends_on:
+      - haproxy
+    environment:
+      - WATCHPACK_POLLING=true
+
+  backend1:
+    build: ./backend
+    expose:
+      - "8000"
+    networks:
+      - app-net
+    environment:
+      - HOSTNAME=backend1
+
+  backend2:
+    build: ./backend
+    expose:
+      - "8000"
+    networks:
+      - app-net
+    environment:
+      - HOSTNAME=backend2
+
+  haproxy:
+    image: haproxy:2.8
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "80:80"
+      - "8404:8404"
+    depends_on:
+      - backend1
+      - backend2
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge

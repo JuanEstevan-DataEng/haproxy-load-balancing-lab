@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: local/backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haproxy  # Named 'haproxy' to match vite.config.js proxy
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80       # Vite proxy sends to port 80 by default
+      targetPort: 8000
+  type: ClusterIP
